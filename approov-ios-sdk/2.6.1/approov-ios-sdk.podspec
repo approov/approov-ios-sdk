@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
                    DESC
   s.homepage     = "https://approov.io"
   # brief license entry:
-  s.license      = "MIT"
+  s.license      = "https://approov.io/terms"
   s.authors      = { "CriticalBlue, Ltd." => "support@approov.io" }
   s.platform     = :ios
   s.source       = { :git => "https://github.com/approov/approov-ios-sdk.git", :tag => "#{s.version}" }
