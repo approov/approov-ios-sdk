@@ -115,12 +115,12 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
 /**
  * Initialize the Approov SDK. This must be called prior to any other methods on the Approov
  * SDK. The SDK is initialized with a base configuration and an optional update configuration
- * and comment. The base configuration is a signed JWT token string that is obtained from the
- * Approov administration portal and contains all necessary parameters to initialize the SDK.
- * This must be stored as a resource in the application using the SDK. An updated configuration
- * may be transmitted while the SDK is in use and this must be stored in the local storage of the app.
+ * and comment. The base configuration is either a short init string or a signed JWT token
+ * that is obtained from the Approov CLI tool  and contains all necessary parameters to initialize the SDK.
+ * An updated configuration may be transmitted while the SDK is in use and this must be stored in the
+ * local storage of the app.
  *
- * @param baseConfig is the base configuration JWT and must be present
+ * @param baseConfig is the base configuration which is either a short inti strinfg or full JWT and must be present
  * @param updateConfig is any update configuration JWT or nil if there is none
  * @param comment is an optional comment that appears when the app is registered, or nil otherwise
  * @param error the reference to an error object which will be set if an error occurred
@@ -149,7 +149,7 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
  * property of the TokenFetchResult. This changed flag is only cleared for future token fetches
  * if a call to this method is made.
  *
- * @return String representation of the configuration or nil if SDK not initialized.
+ * @return String representation of the configuration or empty string or nil if SDK not initialized.
  */
 + (nullable NSString *)fetchConfig;
 
