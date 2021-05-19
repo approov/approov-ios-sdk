@@ -1,4 +1,4 @@
-# ApproovSDK
+# Approov SDK
 ApproovSDK binary release for iOS including podspec files.
 
 Example Podfile:
@@ -7,6 +7,6 @@ Example Podfile:
 target 'YourTestApp' do
     use_frameworks
     platform :ios
-    pod 'ApproovSDK', '2.6.1', :source => "https://github.com/approov/approov-ios-sdk.git"
+    pod 'approov-ios-sdk', '2.7.0', :source => "https://github.com/approov/approov-ios-sdk.git"
 end
 ```
