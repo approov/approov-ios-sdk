@@ -1,7 +1,7 @@
 // swift-tools-version:5.3
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
-let releaseTAG = "2.7.0"
+let releaseTAG = "2.6.1"
 let package = Package(
     name: "Approov",
     platforms: [.iOS(.v10)],
@@ -17,7 +17,7 @@ let package = Package(
         .binaryTarget(
             name: "Approov",
             url: "https://github.com/approov/approov-ios-sdk/releases/download/" + releaseTAG + "/Approov.xcframework.zip",
-            checksum : "37b642944b8ce8402b90e26f20abf181d7fc7ae67ae26d464db0b6d931f97321"
+            checksum : "1c666f0b24b90d2975f96d935f15703d114000f8337749bf9a96618252445adf"
             ),
     ]
 )
