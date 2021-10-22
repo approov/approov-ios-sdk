@@ -114,23 +114,23 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
 
 /**
  * Initialize the Approov SDK. This must be called prior to any other methods on the Approov
- * SDK. The SDK is initialized with a initial configuration and an optional update configuration
- * and comment. The iniitial configuration is either a short init string or a signed JWT token
- * that is obtained from the Approov CLI tool  and contains all necessary parameters to initialize the SDK.
- * An updated configuration may be transmitted while the SDK is in use and this must be stored in the
- * local storage of the app.
+ * SDK. The SDK is initialized with a base configuration and an optional update configuration
+ * and comment. The base configuration is a signed JWT token string that is obtained from the
+ * Approov administration portal and contains all necessary parameters to initialize the SDK.
+ * This must be stored as a resource in the application using the SDK. An updated configuration
+ * may be transmitted while the SDK is in use and this must be stored in the local storage of the app.
  *
- * @param initialConfig is the initial configuration which is either a short init string or full JWT and must be present
+ * @param baseConfig is the base configuration JWT and must be present
  * @param updateConfig is any update configuration JWT or nil if there is none
  * @param comment is an optional comment that appears when the app is registered, or nil otherwise
  * @param error the reference to an error object which will be set if an error occurred
  * @return YES if the Approov framework was successfully initialized or NO otherwise
  */
-+ (BOOL)initialize:(nonnull NSString *)initialConfig updateConfig:(nullable NSString *)updateConfig
++ (BOOL)initialize:(nonnull NSString *)baseConfig updateConfig:(nullable NSString *)updateConfig
     comment:(nullable NSString * )comment error:(NSError *_Nullable *_Nullable)error;
 
 /**
- * Fetches the current configuration for the SDK. This may be the initial configuration or may
+ * Fetches the current configuration for the SDK. This may be the base configuration or may
  * be a new updated configuration returned from the Approov cloud service. Such updates of the
  * configuration allow new sets of certificate pins and other configuration to be passed to
  * an app instance that is running in the field.
@@ -149,7 +149,7 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
  * property of the TokenFetchResult. This changed flag is only cleared for future token fetches
  * if a call to this method is made.
  *
- * @return String representation of the configuration or empty string or nil if SDK not initialized.
+ * @return String representation of the configuration or nil if SDK not initialized.
  */
 + (nullable NSString *)fetchConfig;
 
