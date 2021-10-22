@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.license      = "https://approov.io/terms"
   s.authors      = { "CriticalBlue, Ltd." => "support@approov.io" }
   s.platform     = :ios
-  s.source       = { :git => "https://github.com/ivolz/approov-ios-sdk.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/approov/approov-ios-sdk.git", :tag => "#{s.version}" }
   s.requires_arc = true
   s.pod_target_xcconfig = { 'VALID_ARCHS' => 'arm64 armv7 x86_64' }
   s.ios.vendored_frameworks = "Approov.xcframework"
