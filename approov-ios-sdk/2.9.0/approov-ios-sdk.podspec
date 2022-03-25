@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "approov-ios-sdk"
-  s.version = "2.9.0"
+  s.version      = "2.9.0"
   s.summary      = "ApproovSDK iOS framework"
   s.description  = <<-DESC
                   Approov mobile attestation framework for iOS
