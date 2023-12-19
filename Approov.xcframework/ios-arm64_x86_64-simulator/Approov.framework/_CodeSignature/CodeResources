@@ -6,11 +6,11 @@
 	<dict>
 		<key>Headers/Approov.h</key>
 		<data>
-		HpIu/wwWSi6xWcgY6bLRfTTKIDQ=
+		Sjp5HrT9Yj9mXxoS2+QmpAjhFyU=
 		</data>
 		<key>Info.plist</key>
 		<data>
-		ERgQo9QGP4CEAVzoI0rnt6ieFL0=
+		DSMVnQn1gngsoK9OuDq44mufP1s=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -18,28 +18,20 @@
 		</data>
 		<key>cbconfig.plist</key>
 		<data>
-		2VgHY+8s5cqmEr4eL3B/e+JoPx4=
+		75YWcVH11bkdcN5q0JBbI5Vxvdo=
 		</data>
 	</dict>
 	<key>files2</key>
 	<dict>
 		<key>Headers/Approov.h</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			HpIu/wwWSi6xWcgY6bLRfTTKIDQ=
-			</data>
 			<key>hash2</key>
 			<data>
-			fQn4Zl9g7AgUb8nnqTAIqoqGijukki8Nd6qhNjzxeVI=
+			pOFpLVqFBRbMc2gLc/MX9g6ADy+itvxTieyauX4Vqow=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			N+uNNNarw/86UNk3OTnktt1SccE=
-			</data>
 			<key>hash2</key>
 			<data>
 			bag+tTBxPgpEIck5F9lJyaoAHe5QHHPBUeQ/w7bctnE=
@@ -47,13 +39,9 @@
 		</dict>
 		<key>cbconfig.plist</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			2VgHY+8s5cqmEr4eL3B/e+JoPx4=
-			</data>
 			<key>hash2</key>
 			<data>
-			z6WD8aUwKLwxZNL2vxMpk+Sv5Y39pvTtwIIbOVg8Jgk=
+			1D5PmF3DpqKalnz4Rx3o2acw1CCdPAM9tK8Ul9zwA2I=
 			</data>
 		</dict>
 	</dict>
