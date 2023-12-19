@@ -328,6 +328,18 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
 + (void)setUserProperty:(nullable NSString *)property;
 
 /**
+ * Sets a development key on the SDK. This may be used to force a build of the app
+ * to always pass attestation, even if the app itself is not registered or it is
+ * being run on a simulator. This is to allow testing when the app might have to
+ * be resigned to run on a particular test environment and the signing certificate
+ * is either not known or not easily accessible. The development key is defined at
+ * the account level and can be changed at any point.
+ *
+ * @param key is the development key to be set, which may be nil
+ */
++ (void)setDevKey:(nullable NSString *)key;
+
+/**
  * Sets a hash of the given data value into any future Approov tokens obtained in the 'pay'
  * claim. If the data values is transmitted to the API backend along with the
  * Approov token then this allows the backend to check that the data value was indeed
