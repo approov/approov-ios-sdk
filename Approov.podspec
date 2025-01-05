@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "Approov"
-  s.version      = "3.2.4"
+  s.version      = "3.3.0"
   s.summary      = "Approov SDK"
   s.description  = "Approov mobile attestation SDK."
   s.homepage     = "https://approov.io"
