@@ -7,19 +7,19 @@ Example Podfile:
 target 'YourTestApp' do
     use_frameworks!
     platform :ios
-    pod 'approov-ios-sdk', '3.3.0', :source => "https://github.com/approov/approov-ios-sdk.git"
+    pod 'approov-ios-sdk', '~> 3.3.2'
 end
 target 'Your WatchOS App'
     use_frameworks!
     platform :watchos
-    pod 'approov-ios-sdk', '3.3.0', :source => "https://github.com/approov/approov-ios-sdk.git"
+    pod 'approov-ios-sdk', '~> 3.3.2'
 end
 ```
 
 If you would like to add the Approov SDK as a binary dependency in your `swift package`, add this line to your `targets` section:
 
 ```swift
-let releaseTAG = "3.3.0"
+let releaseTAG = "3.3.1"
 ...
 ...
 ...
