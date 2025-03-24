@@ -7,26 +7,26 @@ Example Podfile:
 target 'YourTestApp' do
     use_frameworks!
     platform :ios
-    pod 'approov-ios-sdk', '~> 3.3.2'
+    pod 'approov-ios-sdk', '~> 3.4.0'
 end
 target 'Your WatchOS App'
     use_frameworks!
     platform :watchos
-    pod 'approov-ios-sdk', '~> 3.3.2'
+    pod 'approov-ios-sdk', '~> 3.4.0'
 end
 ```
 
 If you would like to add the Approov SDK as a binary dependency in your `swift package`, add this line to your `targets` section:
 
 ```swift
-let releaseTAG = "3.3.1"
+let releaseTAG = "3.4.0"
 ...
 ...
 ...
 .binaryTarget(
             name: "Approov",
             url: "https://github.com/approov/approov-ios-sdk/releases/download/" + releaseTAG + "/Approov.xcframework.zip",
-            checksum : "8c8737a2cea95e7101f6e05114c37f3f45a600abd196aca05d2c58edb90634dd"
+            checksum : "9a02cb9ca905a9e2e0692047dfd4cdbfd3133c9e4b644bdfe898f7ce1b8d7461"
         )
 
 

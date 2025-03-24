@@ -142,8 +142,9 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
  * that is obtained from the Approov CLI tool and contains all necessary parameters to initialize the SDK.
  * An updated configuration may be transmitted while the SDK is in use and this must be stored in the
  * local storage of the app. If "auto" is provided as the update configuration then the SDK will manage
- * its own configuration update storage. If "reinit" is provided for the comment then it allows the SDK to
- * be reinitialized to change Approov accounts.
+ * its own configuration update storage. Options may be passed to the SDK if the comment string starts
+ * with "options:". If the comment starts with "reinit" then it allows the SDK to be reinitialized to
+ * change Approov accounts.
  * 
  * Calling this method causes a background fetch preparation to be initiated to contact the
  * Approov servers ready for performing a subsequent token fetch. This helps to reduce the
@@ -152,7 +153,7 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
  *
  * @param initialConfig is the initial configuration which is either a short init string or full JWT and must be present
  * @param updateConfig is any update configuration JWT, "auto" or nil if there is none
- * @param comment is an optional comment that may be "reinit" to force SDK reinitialization, or nil otherwise
+ * @param comment is an optional comment that may also be used for initialization/reinitialization options, or nil otherwise
  * @param error the reference to an error object which will be set if an error occurred
  * @return YES if the Approov framework was successfully initialized or NO otherwise
  */
@@ -366,6 +367,19 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
 + (void)setDataHashInToken:(nonnull NSString *)data;
 
 /**
+ * Sets an install attributes token to be sent to the server and associated with this particular
+ * app installation for future Approov token fetches. The token must be signed, within its
+ * expiry time and bound to the correct device ID for it to be accepted by the server. This
+ * provides a mechanism whereby attributes can become associated with an app installation when
+ * certain actions are performed, in particular to allow the enforcement of additional frictions
+ * for new app installations. Calling this method ensures that the next call to fetch an Approov
+ * token will not use a cached version, so that this information can be transmitted to the server.
+ *
+ * @param installAttrs is the signed JWT holding the new install attributes
+ */
++ (void)setInstallAttrsInToken:(nonnull NSString *)installAttrs;
+
+/**
  * Obtains an integrity measurement proof that is used to show that the app and its
  * environment have not changed since the time of the original integrity measurement.
  * The proof does an HMAC calculation over the secret integrity measurement value which
@@ -395,17 +409,42 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
 + (nullable NSData *)getDeviceMeasurementProof:(nonnull NSData *)nonce :(nonnull NSData *)measurementConfig;
 
 /**
- * Gets the device ID used by Approov to identify the particular device that the SDK is running on. Note
- * that different Approov apps on the same device will return a different ID. Moreover, the ID may be
- * changed by an uninstall and reinstall of the app.
+ * Gets the device ID used by Approov to identify the particular app installation that the SDK is running
+ * in. Different Approov apps on the same device will return a different ID. The ID may be changed by an
+ * uninstall and reinstall of the app.
  *
  * @return String of device ID or nil if SDK not initialized.
  */
 + (nullable NSString *)getDeviceID;
 
 /**
+ * Gets the installation public key created when the app is run for the first time. The private key is used
+ * to sign getInstallMessageSignature() messages and the public key may also be included in Approov
+ * tokens. The key is provided base64 DER encoded in an ASN.1 format. The key is always EC using the
+ * P-256 curve.
+ *
+ * @return installation public key has base64 DER encoded ASN.1 string
+ */
++ (nullable NSString *)getInstallPublicKey;
+
+/**
  * Gets the signature for the given message. This uses an account specific message signing key that is
- * transmitted to the SDK after a successful token fetch if the facility is enabled for the account. Note
+ * transmitted to the SDK after a successful attestation if the facility is enabled for the account. Note
+ * that if the attestation failed then the signing key provided is actually random so that the
+ * signature will be incorrect. An Approov token should always be included in the message
+ * being signed and sent alongside this signature to prevent replay attacks.
+ * 
+ * NOTE: This is only provided for background compatibility and the new method name
+ * "getAccountMessageSignature" should be used instead.
+ *
+ * @param message is the content of the message to be signed
+ * @return base64 encoded signature of the message, or nil if no signing key is available
+ */
++ (nullable NSString *)getMessageSignature:(nonnull NSString *)message;
+
+/**
+ * Gets the signature for the given message. This uses an account specific message signing key that is
+ * transmitted to the SDK after a successful attestation if the facility is enabled for the account. Note
  * that if the attestation failed then the signing key provided is actually random so that the
  * signature will be incorrect. An Approov token should always be included in the message
  * being signed and sent alongside this signature to prevent replay attacks.
@@ -413,6 +452,20 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
  * @param message is the content of the message to be signed
  * @return base64 encoded signature of the message, or nil if no signing key is available
  */
-+ (nullable NSString *)getMessageSignature:(nonnull NSString *)message;
++ (nullable NSString *)getAccountMessageSignature:(nonnull NSString *)message;
+
+/**
+ * Gets the installation signature for the given message. This uses an installation specific key pair for
+ * signing where the private key is held securely on the device (and never leaves it) and the public key is
+ * included in the Approov token for verification purposes. The signature is base64 DER encoded in ASN.1 format and
+ * is an X962 signature of the SHA256 digest of the message UTF8 data provided. The key used is always ECDSA P-256.
+ * Note that a valid installation signature does not mean that the device has been validly attested, and a combination
+ * of a valid (and unexpired) Approov token and valid installation message signature are required to verify a message.
+ * Moreover, the Approov token should always be included in the message being signed to prevent replay attacks.
+ *
+ * @param message is the message whose content is to be installation signed
+ * @return base64 encoded installation signature of the message, or nil if there was an error
+ */
++ (nullable NSString *)getInstallMessageSignature:(nonnull NSString *)message;
 
 @end
