@@ -143,19 +143,22 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
  * An updated configuration may be transmitted while the SDK is in use and this must be stored in the
  * local storage of the app. If "auto" is provided as the update configuration then the SDK will manage
  * its own configuration update storage. Options may be passed to the SDK if the comment string starts
- * with "options:". If the comment starts with "reinit" then it allows the SDK to be reinitialized to
- * change Approov accounts.
+ * with "options:". Typically the SDK can only be initialized once, although subsequent calls with exactly
+ * the same parameters are ignored and do not generate an error. If the comment starts with "reinit" then
+ * it allows the SDK to be reinitialized to change Approov accounts.
  * 
- * Calling this method causes a background fetch preparation to be initiated to contact the
- * Approov servers ready for performing a subsequent token fetch. This helps to reduce the
- * latency associated with this operation. This fetch preparation is performed fully in the
+ * Calling this method causes an asynchronous background fetch to be initiated. If the app
+ * has been previously launched then this may perform a full resumption to fetch Approov tokens and
+ * secure strings to minimize the latency when an explicit fetch is subsequently made. Otherwise
+ * (or if resumption is unavailable or disabled) only a refresh is made, which accelerates later
+ * explicit fetching by a smaller amount. In all cases this fetch is performed fully in the
  * background and this method always returns immediately.
  *
  * @param initialConfig is the initial configuration which is either a short init string or full JWT and must be present
  * @param updateConfig is any update configuration JWT, "auto" or nil if there is none
  * @param comment is an optional comment that may also be used for initialization/reinitialization options, or nil otherwise
  * @param error the reference to an error object which will be set if an error occurred
- * @return YES if the Approov framework was successfully initialized or NO otherwise
+ * @return YES if the Approov framework was successfully initialized or NO if there was an error or it was already initialized with the same parameters
  */
 + (BOOL)initialize:(nonnull NSString *)initialConfig updateConfig:(nullable NSString *)updateConfig
     comment:(nullable NSString * )comment error:(NSError *_Nullable *_Nullable)error;
