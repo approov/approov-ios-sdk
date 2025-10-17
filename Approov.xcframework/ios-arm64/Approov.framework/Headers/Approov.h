@@ -147,12 +147,10 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
  * the same parameters are ignored and do not generate an error. If the comment starts with "reinit" then
  * it allows the SDK to be reinitialized to change Approov accounts.
  * 
- * Calling this method causes an asynchronous background fetch to be initiated. If the app
+ * Calling this method may cause an asynchronous background fetch to be initiated. If the app
  * has been previously launched then this may perform a full resumption to fetch Approov tokens and
  * secure strings to minimize the latency when an explicit fetch is subsequently made. Otherwise
- * (or if resumption is unavailable or disabled) only a refresh is made, which accelerates later
- * explicit fetching by a smaller amount. In all cases this fetch is performed fully in the
- * background and this method always returns immediately.
+ * a fetch is only made if the InitFetch SDK configuration option has been enabled for the account.
  *
  * @param initialConfig is the initial configuration which is either a short init string or full JWT and must be present
  * @param updateConfig is any update configuration JWT, "auto" or nil if there is none
