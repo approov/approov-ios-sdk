@@ -80,6 +80,9 @@ __attribute__((visibility("default"))) @interface ApproovTokenFetchResult: NSObj
 // no token could be obtained.
 @property (readonly, nonnull) NSString *token;
 
+// Optional traceID associated with the token fetch operation or nil if it is not available.
+@property (readonly, nonnull) NSString *traceID;
+
 // The secure string of the last secure string fetch. This value should not be cached by the app client code. This may
 // be nil if the string is not available.
 @property (readonly, nullable) NSString *secureString;
@@ -229,15 +232,14 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
  * connectivity or other factors an Approov token cannot be obtained, and this is reflected in the
  * returned status.
  *
- * All calls must provide a url which provides the high level domain of the API to which the Approov
- * token is going to be sent. Different API domains will have different Approov tokens associated with
- * them so it is important that the Approov token is only sent to requests for that domain. If the
- * domain has not been configured in the admin portal then an error is obtained. Note that the provided
- * URL may be suffixed by "?measurement" to initiate a measurement process for use with integrity and
- * device proofs.
+ * All calls must provide a URL which provides the endpoint to which the Approov token is going to be sent.
+ * Different URL host domains will have different Approov tokens associated with them so it is important
+ * that the Approov token is only sent to requests for that domain. If the domain has not been configured in 
+ * the account then an error status is obtained. Note that the provided URL may be suffixed by "?measurement"
+ * to initiate a measurement process for use with integrity and device proofs.
  *
  * @param callbackHandler is a function that takes an ApproovTokenFetchResult when the token is obtained
- * @param url provides the top level domain url for which a token is being fetched
+ * @param url provides the URL for which a token is being fetched
  */
 + (void)fetchApproovToken:(nonnull ApproovTokenFetchCallback)callbackHandler :(nonnull NSString *)url;
 
@@ -253,14 +255,13 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
  * connectivity or other factors an Approov token cannot be obtained, and this is reflected in the
  * returned status.
  *
- * All calls must provide a URL which provides the high level domain of the API to which the Approov
- * token is going to be sent. Different API domains will have different Approov tokens associated with
- * them so it is important that the Approov token is only sent to requests for that domain. If the
- * domain has not been configured in the admin portal then an error is obtained. Note that the provided
- * URL may be suffixed by "?measurement" to initiate a measurement process for use with integrity and
- * device proofs.
+ * All calls must provide a URL which provides the endpoint to which the Approov token is going to be sent.
+ * Different URL host domains will have different Approov tokens associated with them so it is important
+ * that the Approov token is only sent to requests for that domain. If the domain has not been configured in 
+ * the account then an error status is obtained. Note that the provided URL may be suffixed by "?measurement"
+ * to initiate a measurement process for use with integrity and device proofs.
  *
- * @param url provides the top level domain URL for which a token is being fetched
+ * @param url provides the URL for which a token is being fetched
  * @return results of fetching a token
  */
 + (nonnull ApproovTokenFetchResult *)fetchApproovTokenAndWait:(nonnull NSString *)url;
