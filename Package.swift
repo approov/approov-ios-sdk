@@ -16,8 +16,8 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .binaryTarget(
             name: "Approov",
-            url: "https://github.com/approov/approov-ios-sdk/releases/download/3.5.2/Approov.xcframework.zip",
-            checksum : "9e3ec6e71fbdb23d46d1475a9160e4c1ba67c52721c8df995723a00013b29726"
+            url: "https://github.com/approov/approov-ios-sdk/releases/download/3.5.3/Approov.xcframework.zip",
+            checksum : "acfbee9e6c8009535c070c87c0d5756c2ba8f78e7b8147d7632f12bfcb940c89"
             ),
     ]
 )
