@@ -7,12 +7,12 @@ Example Podfile:
 target 'YourTestApp' do
     use_frameworks!
     platform :ios
-    pod 'approov-ios-sdk', '~> 3.7.0'
+    pod 'approov-ios-sdk', :git => 'https://github.com/approov/approov-ios-sdk.git', :tag => '3.7.0'
 end
-target 'Your WatchOS App'
+target 'Your WatchOS App' do
     use_frameworks!
     platform :watchos
-    pod 'approov-ios-sdk', '~> 3.7.0'
+    pod 'approov-ios-sdk', :git => 'https://github.com/approov/approov-ios-sdk.git', :tag => '3.7.0'
 end
 ```
 
