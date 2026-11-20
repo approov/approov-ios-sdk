@@ -25,9 +25,15 @@ typedef NS_ENUM(NSUInteger, ApproovTokenFetchStatus)
     // Indicates that the fetch failed because there is currently no network connectivity.
     ApproovTokenFetchStatusNoNetwork,
 
-    // Indicates that the fetch failed because the certificate presented on the Approov endpoint was not one
-    // that was expected. This might indicate the device is running on a network with a firewall that terminates TLS.
+    // Indicates that the fetch failed because the network is untrusted and is either redirecting the
+    // request to a different domain or there is TLS intercepting firewall in place where the root certificate
+    // for it has not been added to the device. This is deprecated and will be removed in SDK 4.0.0.
     ApproovTokenFetchStatusMITMDetected,
+
+    // Indicates that the fetch failed because the network is untrusted and is either redirecting the
+    // request to a different domain or there is TLS intercepting firewall in place where the root certificate
+    // for it has not been added to the device. This will only be available on SDK 4.0.0 and later.
+    //ApproovTokenFetchStatusUntrustedNetwork,
 
     // Indicates that the fetch failed due to poor network connectivity.
     ApproovTokenFetchStatusPoorNetwork,
@@ -131,29 +137,35 @@ typedef void (^ApproovTokenFetchCallback)(ApproovTokenFetchResult *_Nonnull resu
 __attribute__((visibility("default"))) @interface Approov: NSObject
 
 /**
- * Gets a human readable string from an Approov token fetch status.
+ * Gets a string from an Approov token fetch status that is consistent across different platforms.
  *
  * @param approovTokenFetchStatus is the ApproovTokenFetchStatus
- * @return the string for the ApproovTokenFetchStatusq
+ * @return the canonical string for the ApproovTokenFetchStatus
  */
 + (nonnull NSString *)stringFromApproovTokenFetchStatus:(ApproovTokenFetchStatus)approovTokenFetchStatus;
 
 /**
  * Initialize the Approov SDK. This must be called prior to any other methods on the Approov
  * SDK. The SDK is initialized with a initial configuration and an optional update configuration
- * and comment. The iniitial configuration is either a short init string or a signed JWT token
+ * and comment. The initial configuration is either a short init string or a signed JWT token
  * that is obtained from the Approov CLI tool and contains all necessary parameters to initialize the SDK.
  * An updated configuration may be transmitted while the SDK is in use and this must be stored in the
  * local storage of the app. If "auto" is provided as the update configuration then the SDK will manage
  * its own configuration update storage. Options may be passed to the SDK if the comment string starts
  * with "options:". Typically the SDK can only be initialized once, although subsequent calls with exactly
- * the same parameters are ignored and do not generate an error. If the comment starts with "reinit" then
- * it allows the SDK to be reinitialized to change Approov accounts.
+ * the same parameters are ignored and do not generate an error.
  * 
  * Calling this method may cause an asynchronous background fetch to be initiated. If the app
- * has been previously launched then this may perform a full resumption to fetch Approov tokens and
- * secure strings to minimize the latency when an explicit fetch is subsequently made. Otherwise
- * a fetch is only made if the InitFetch SDK configuration option has been enabled for the account.
+ * was previously launched and fetched a token then this may perform a full resumption to fetch
+ * Approov tokens and secure strings to minimize the latency when an explicit fetch is subsequently
+ * made. Otherwise a fetch is only made if the InitFetch SDK configuration option has been enabled
+ * for the account. The fetch background fetch will wait until unblocked network connectivity is
+ * available.
+ * 
+ * If the comment starts with "reinit" then the SDK can be reinitialized with a different account. Note
+ * in this case the initialization is blocked until any prior requests have been completed. Thus
+ * reinitialization should never be called from a UI thread (but note it is safe to call the standard
+ * initialization from a UI thread).
  *
  * @param initialConfig is the initial configuration which is either a short init string or full JWT and must be present
  * @param updateConfig is any update configuration JWT, "auto" or nil if there is none
@@ -176,7 +188,7 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
  * latest configuration from the Approov servers.
  *
  * Note that the returned configuration should generally be kept in local storage for the app
- * so that it can be made available on initialisation of the Approov SDK next time the app
+ * so that it can be made available on initialization of the Approov SDK next time the app
  * is started.
  *
  * It is possible to see if a new configuration becomes available from the isConfigChanged
@@ -192,11 +204,8 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
  * If the SDK has not be initialized then nil is returned. Note that if the isForceApplyPins flag was set on the last Approov
  * token fetch then this clears the flag for future fetches as it indicates that the latest pin information has been read.
  * Pins may be returned with "*" as the domain as these represent the trusted root pins of all the acceptable
- * certificate authorities.
- * 
- * Normally this method returns immediately with the latest pins that are cached in the
- * SDK. However, if no pins are available at all then there will be a short blocking delay as an
- * attempt will be made to fetch them from the Approov servers.
+ * certificate authorities.  Note that if no Approov token has ever been fetched for the app installation then an empty
+ * set of pins may be returned.
  *
  * @param pinType is the format of the pins that should be retrieved
  * @result NSDictionary mapping from domain names to a list of pins in base64 format for that domain
@@ -205,14 +214,11 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
 
 /**
  * Provide access to the API pin information held in the current app configuration. This method provides the information in
- * marsahlled JSON form.Pins of a particular type are retrieved. If the SDK has not be initialized then nil is returned. Note that
+ * marshaled JSON form.Pins of a particular type are retrieved. If the SDK has not be initialized then nil is returned. Note that
  * if the isForceApplyPins flag was set on the last Approov token fetch then this clears the flag for future fetches as it indicates
  * that the latest pin information has been read. Pins may be returned with "*" as the domain as these represent the trusted
- * root pins of all the acceptable certificate authorities.
- *
- * Normally this method returns immediately with the latest pins that are cached in the
- * SDK. However, if no pins are available at all then there will be a short blocking delay as an
- * attempt will be made to fetch them from the Approov servers.
+ * root pins of all the acceptable certificate authorities. Note that if no Approov token has ever been fetched for the app
+ * installation then an empty set of pins may be returned.
  * 
  * @param pinType is the format of the pins that should be retrieved
  * @result String representation of the JSON representing the pins, or nil if the SDK has not been initialized
@@ -353,20 +359,48 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
 + (void)setDevKey:(nullable NSString *)key;
 
 /**
- * Sets a hash of the given data value into any future Approov tokens obtained in the 'pay'
- * claim. If the data values is transmitted to the API backend along with the
- * Approov token then this allows the backend to check that the data value was indeed
- * known to the app at the time of the token fetch and hasn't been spoofed. If the
- * data is the same as any previous one set then the token does not need to be updated.
- * Otherwise the next token fetch causes a new attestation to fetch a new token. Note that
- * this should not be done frequently due to the additional latency on token fetching that
- * will be caused. The hash appears in the 'pay' claim of the Approov token as a base64
- * encoded string of the SHA256 hash of the data. Note that the data is hashed locally and
- * never sent to the Approov cloud service.
+ * Sets a hash of the given data value to be included in the 'pay' claim of any future Approov
+ * tokens. The hash appears in the claim as a base64 encoded string of the SHA256 hash of the
+ * data. The data is hashed locally and never sent to the Approov cloud service, so this method
+ * is suitable for binding personal or other sensitive data to a token.
+ *
+ * Transmitting the data value to the API backend alongside the Approov token allows the backend
+ * to verify that the value was known to the app at the time of the token fetch and has not been
+ * spoofed. A new attestation to fetch a new token is only triggered if a call to this method
+ * changes the data value; if the data is unchanged then any existing token remains valid. The
+ * data should not be changed frequently, as each change adds latency to the next token fetch.
+ *
+ * Only a single data hash can be set globally across all API domains at one time, and it is
+ * overwritten by any use of the setDataInToken method.
  *
  * @param data is the data whose SHA256 hash is to be included in future Approov tokens
  */
 + (void)setDataHashInToken:(nonnull NSString *)data;
+
+/**
+ * Sets a data string to be included in the 'pay' claim of any future Approov tokens. The data
+ * is limited to a maximum of 64 ASCII printable characters and must not contain spaces, quotes
+ * or backslashes.
+ *
+ * @warning The data is communicated to the Approov cloud service in its raw form, so it must
+ * NOT contain personal or other sensitive information such as credentials. If you need to bind
+ * sensitive data to a token, use the setDataHashInToken method instead, which hashes the data
+ * locally and never sends it to the Approov cloud service.
+ *
+ * Transmitting the data value to the API backend alongside the Approov token allows the backend
+ * to verify that the value was known to the app at the time of the token fetch and has not been
+ * spoofed. A new attestation to fetch a new token is only triggered if a call to this method
+ * changes the data value; if the data is unchanged then any existing token remains valid. The
+ * data should not be changed frequently, as each change adds latency to the next token fetch.
+ *
+ * Only a single data value can be set globally across all API domains at one time, and it is
+ * overwritten by any use of the setDataHashInToken method.
+ *
+ * @param data is the data to be included in future Approov tokens, or nil to clear it; must
+ * not contain personal or sensitive information
+ * @return YES if the data was successfully set, NO if it is invalid or exceeds the length limit
+ */
++ (BOOL)setDataInToken:(nullable NSString *)data;
 
 /**
  * Sets an install attributes token to be sent to the server and associated with this particular
@@ -430,28 +464,28 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
 + (nullable NSString *)getInstallPublicKey;
 
 /**
- * Gets the signature for the given message. This uses an account specific message signing key that is
- * transmitted to the SDK after a successful attestation if the facility is enabled for the account. Note
- * that if the attestation failed then the signing key provided is actually random so that the
+ * Gets the signature for the given message. This uses an account and device ID specific message signing key
+ * that is transmitted to the SDK after a successful attestation if the facility is enabled for the account.
+ * Note that if the attestation failed then the signing key provided is actually random so that the
  * signature will be incorrect. An Approov token should always be included in the message
  * being signed and sent alongside this signature to prevent replay attacks.
  * 
  * NOTE: This is only provided for background compatibility and the new method name
  * "getAccountMessageSignature" should be used instead.
  *
- * @param message is the content of the message to be signed
+ * @param message is the content of the message whose UTF8 bytes are to be account signed
  * @return base64 encoded signature of the message, or nil if no signing key is available
  */
 + (nullable NSString *)getMessageSignature:(nonnull NSString *)message;
 
 /**
- * Gets the signature for the given message. This uses an account specific message signing key that is
- * transmitted to the SDK after a successful attestation if the facility is enabled for the account. Note
- * that if the attestation failed then the signing key provided is actually random so that the
+ * Gets the signature for the given message. This uses an account and device ID specific message signing key
+ * that is transmitted to the SDK after a successful attestation if the facility is enabled for the account.
+ * Note that if the attestation failed then the signing key provided is actually random so that the
  * signature will be incorrect. An Approov token should always be included in the message
  * being signed and sent alongside this signature to prevent replay attacks.
  *
- * @param message is the content of the message to be signed
+ * @param message is the content of the message whose UTF8 bytes are to be account signed
  * @return base64 encoded signature of the message, or nil if no signing key is available
  */
 + (nullable NSString *)getAccountMessageSignature:(nonnull NSString *)message;
@@ -464,10 +498,25 @@ __attribute__((visibility("default"))) @interface Approov: NSObject
  * Note that a valid installation signature does not mean that the device has been validly attested, and a combination
  * of a valid (and unexpired) Approov token and valid installation message signature are required to verify a message.
  * Moreover, the Approov token should always be included in the message being signed to prevent replay attacks.
+ * An install key may not be available until after an attestation has been performed and even then its availability
+ * is not guaranteed.
  *
- * @param message is the message whose content is to be installation signed
+ * @param message is the content of the message whose UTF8 bytes are to be installation signed
  * @return base64 encoded installation signature of the message, or nil if there was an error
  */
 + (nullable NSString *)getInstallMessageSignature:(nonnull NSString *)message;
+
+/**
+ * Gets the current time in milliseconds adjusted by the server time offset. An adjustment is provided immediately
+ * after an attestation fetch has been performed. The adjustment will typically make the time returned by this method
+ * less accurate due to the response propagation time from the server. However, it will deal with any very significant
+ * clock skew on the client if its time is incorrectly set and not synchronized. This is provided to support the
+ * addition of reliable timestamps on message signatures that are known to be compatible with server time. If this is
+ * called prior to any attestation then the unadjusted current client time is provided.The returned time is expressed
+ * in milliseconds since the epoch (January 1, 1970, 00:00:00 GMT).
+ *
+ * @return the current time in milliseconds adjusted by the server time offset
+ */
++ (int64_t)getServerAdjustedCurrentTimeMS;
 
 @end
