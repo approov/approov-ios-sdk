@@ -4,7 +4,7 @@ We encourage all users of this software to update to the latest version for the 
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 3.5.x   | :white_check_mark: |
+| 3.7.x   | :white_check_mark: |
 | < 3.4   | :x:                |
 
 ## Reporting a Vulnerability
@@ -12,4 +12,4 @@ We encourage all users of this software to update to the latest version for the 
 Thank you for letting us know about possible security vulnerabilities to this project. 
 Please don’t publish details in a public issue or PR, send us a private email at support@approov.io. Please disclose which version your report refers to. 
 
-Your message will recieve a prompt reply. 
+Your message will receive a prompt reply. 
