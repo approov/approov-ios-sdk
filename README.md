@@ -1,20 +1,22 @@
 # Approov SDK
-ApproovSDK binary release for iOS including podspec files.
+ApproovSDK binary release for iOS and watchOS, including podspec files.
 
 Example Podfile:
 
 ```podfile
 target 'YourTestApp' do
     use_frameworks!
-    platform :ios
+    platform :ios, '12.0'
     pod 'approov-ios-sdk', :git => 'https://github.com/approov/approov-ios-sdk.git', :tag => '3.7.0'
 end
 target 'Your WatchOS App' do
     use_frameworks!
-    platform :watchos
+    platform :watchos, '9.0'
     pod 'approov-ios-sdk', :git => 'https://github.com/approov/approov-ios-sdk.git', :tag => '3.7.0'
 end
 ```
+
+If your app uses an Approov service layer pod (`approov-service-*`), keep the `approov-ios-sdk` line in your Podfile. A podspec dependency cannot point at a git source, so CocoaPods gets the SDK only from this line.
 
 If you would like to add the Approov SDK as a binary dependency in your `swift package`, add this line to your `targets` section:
 
