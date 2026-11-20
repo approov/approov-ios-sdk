@@ -16,8 +16,6 @@ target 'Your WatchOS App' do
 end
 ```
 
-If your app uses an Approov service layer pod (`approov-service-*`), keep the `approov-ios-sdk` line in your Podfile. A podspec dependency cannot point at a git source, so CocoaPods gets the SDK only from this line.
-
 If you would like to add the Approov SDK as a binary dependency in your `swift package`, add this line to your `targets` section:
 
 ```swift
