@@ -5,7 +5,7 @@ We encourage all users of this software to update to the latest version for the 
 | Version | Supported          |
 | ------- | ------------------ |
 | 3.7.x   | :white_check_mark: |
-| < 3.4   | :x:                |
+| < 3.5   | :x:                |
 
 ## Reporting a Vulnerability
 
