@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "Approov",
-    platforms: [.iOS(.v11), .watchOS(.v9)],
+    platforms: [.iOS(.v12), .watchOS(.v9)],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
@@ -16,8 +16,8 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .binaryTarget(
             name: "Approov",
-            url: "https://github.com/approov/approov-ios-sdk/releases/download/3.5.3/Approov.xcframework.zip",
-            checksum : "acfbee9e6c8009535c070c87c0d5756c2ba8f78e7b8147d7632f12bfcb940c89"
+            url: "https://github.com/approov/approov-ios-sdk/releases/download/3.7.0/Approov.xcframework.zip",
+            checksum : "1ba29ac5a8093e22e29b28a4ba1411b764b8736e1b54f1471ac106dc366a7f5c"
             ),
     ]
 )

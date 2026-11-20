@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name         = "approov-ios-sdk"
-    s.version      = "3.5.3"
+    s.version      = "3.7.0"
     s.summary      = "ApproovSDK iOS/watchOS framework"
     s.description  = <<-DESC
                     Approov mobile attestation framework for iOS and watchOS
@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
     s.pod_target_xcconfig = { 'VALID_ARCHS' => 'arm64 arm64_32 x86_64' }
     
     # Define platform support
-    s.ios.deployment_target = '11.0'
+    s.ios.deployment_target = '12.0'
     s.watchos.deployment_target = '9.0'
 
     # Specify vendored frameworks for both platforms
